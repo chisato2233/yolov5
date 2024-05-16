@@ -98,7 +98,7 @@ elif option == '👁️品种识别':
             with open(video_path, "wb") as f:
                 f.write(uploaded_file.read())
 
-        if st.button("开始品种识别！😆"):
+        if st.button("开始识别！😆"):
             with st.spinner("模型在检测... 🤯🤯🤯"):
                 if file_type in ["jpg", "jpeg", "png"]:
                     # 图片识别逻辑
@@ -144,53 +144,10 @@ elif option == '👁️品种识别':
                     st.video(result_video_path)
 
                 # 清理临时生成的文件
-                os.remove(os.path.join("temp_images" if file_type in ["jpg", "jpeg", "png"] else "temp_videos", unique_filename))
-                os.remove(os.path.join("temp_results", "detect_result", unique_filename))
-
-elif option == '👁️品种识别':
-    
-    st.markdown("## 👁️品种识别")
-    st.write('品种识别是指使用依托于自主构建的包含主要桃子品种在不同成熟阶段、不同光照条件下的数据集，'
-             '训练并优化得出的桃子品种识别模型精准快速地识别桃子品种。在下方上传需要分析的桃子图片即可自动识别并生成识别结果。')
-    uploaded_file = st.file_uploader("请上传要分析的桃子的图片 ：", type=["jpg", "png", "jpeg"])
-    if uploaded_file is not None:
-        image = Image.open(uploaded_file)
-        st.image(image, caption="Uploaded Image", use_column_width=True)
-        
-        # 生成一个唯一的文件名，以避免在并发使用时文件名冲突
-        unique_filename = str(uuid.uuid4()) + ".jpg"
-        image_path = os.path.join("temp_images", unique_filename)
-        os.makedirs("temp_images", exist_ok=True)
-        image.save(image_path)
-
-
-        # 用户点击"Detect"按钮后执行
-        if st.button("识别！😆"):
-            with st.spinner("AI正在疯狂思考... 🤯🤯🤯"):
-                # 调用YOLOv5的detect.py脚本进行推断
-                print("当前工作目录:", os.getcwd())
-                import sys
-                result = subprocess.run([
-                    sys.executable, "detect.py",
-                    "--weights", "best.pt",
-                    "--source", image_path,
-                    "--project", "temp_results",
-                    "--name", "detect_result",
-                    "--exist-ok",
-                    "--line-thickness", "2",
-                ], check=True)
-
-                if result.returncode != 0:
-                    print("错误输出:", result.stderr.decode())
-                # 读取并显示结果图像
-                result_path = os.path.join("temp_results", "detect_result", unique_filename)
-                result_image = Image.open(result_path)
-                st.image(result_image, caption="Detection Result", use_column_width=True)
-
-                # 清理临时生成的文件
-                os.remove(image_path)
-                os.remove(result_path)
-
+                if st.button('清理临时文件'):
+                    os.remove(os.path.join("temp_images" if file_type in ["jpg", "jpeg", "png"] else "temp_videos", unique_filename))
+                    os.remove(os.path.join("temp_results", "detect_result", unique_filename))
+                    st.success("临时文件已清理！")
 
 
 
