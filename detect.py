@@ -31,7 +31,8 @@ Usage - formats:
 import argparse
 import csv
 import os
-
+import cv2
+print(cv2.__version__)
 print(os.getcwd())
 
 import platform
