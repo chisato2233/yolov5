@@ -71,8 +71,81 @@ if option == '🎨着色度分析':
                 st.image(color_detect(uploaded_file), caption='分析结果', use_column_width=True)
 
 
+elif option == '👁️品种识别':
+
+    st.markdown("## 👁️品种识别")
+    st.write('品种识别是指使用依托于自主构建的包含主要桃子品种在不同成熟阶段、不同光照条件下的数据集，'
+            '训练并优化得出的桃子品种识别模型精准快速地识别桃子品种。在下方上传需要分析的桃子图片或视频即可自动识别并生成识别结果。')
+
+    # 允许上传图片或视频文件
+    uploaded_file = st.file_uploader("请上传要分析的桃子的图片或视频：", type=["jpg", "jpeg", "png", "mp4", "avi", "mov"])
+    if uploaded_file is not None:
+        file_type = uploaded_file.name.split('.')[-1].lower()  # 获取文件扩展名
+        if file_type in ["jpg", "jpeg", "png"]:
+            # 处理图片
+            image = Image.open(uploaded_file)
+            st.image(image, caption="Uploaded Image", use_column_width=True)
+            
+            unique_filename = f"{uuid.uuid4()}.{file_type}"
+            image_path = os.path.join("temp_images", unique_filename)
+            os.makedirs("temp_images", exist_ok=True)
+            image.save(image_path)
+        else:
+            # 处理视频
+            unique_filename = f"{uuid.uuid4()}.{file_type}"
+            video_path = os.path.join("temp_videos", unique_filename)
+            os.makedirs("temp_videos", exist_ok=True)
+            with open(video_path, "wb") as f:
+                f.write(uploaded_file.read())
+
+        if st.button("开始品种识别！😆"):
+            with st.spinner("模型在检测... 🤯🤯🤯"):
+                if file_type in ["jpg", "jpeg", "png"]:
+                    # 图片识别逻辑
+                    import sys
+                    result = subprocess.run([
+                        sys.executable, "detect.py",
+                        "--weights", "best.pt",
+                        "--source", image_path,
+                        "--project", "temp_results",
+                        "--name", "detect_result",
+                        "--exist-ok",
+                        "--line-thickness", "2",
+                    ], check=True)
+
+                    if result.returncode != 0:
+                        print("错误输出:", result.stderr.decode())
 
 
+
+
+                    # 读取并显示结果图像
+                    result_path = os.path.join("temp_results", "detect_result", unique_filename)
+                    result_image = Image.open(result_path)
+                    st.image(result_image, caption="Detection Result", use_column_width=True)
+                else:
+                    # 视频识别逻辑
+                    import sys
+                    result = subprocess.run([
+                        sys.executable, "detect.py",
+                        "--weights", "best.pt",
+                        "--source",     video_path,
+                        "--project", "temp_results",
+                        "--name", "detect_result",
+                        "--exist-ok",
+                        "--line-thickness", "2",
+                    ], check=True)
+
+                    if result.returncode != 0:
+                        print("错误输出:", result.stderr.decode())
+
+                    # 显示结果视频
+                    result_video_path = os.path.join("temp_results", "detect_result", unique_filename)
+                    st.video(result_video_path)
+
+                # 清理临时生成的文件
+                os.remove(os.path.join("temp_images" if file_type in ["jpg", "jpeg", "png"] else "temp_videos", unique_filename))
+                os.remove(os.path.join("temp_results", "detect_result", unique_filename))
 
 elif option == '👁️品种识别':
     
@@ -106,7 +179,7 @@ elif option == '👁️品种识别':
                     "--exist-ok",
                     "--line-thickness", "2",
                 ], check=True)
-                
+
                 if result.returncode != 0:
                     print("错误输出:", result.stderr.decode())
                 # 读取并显示结果图像
