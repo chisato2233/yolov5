@@ -148,19 +148,31 @@ elif option == '👁️品种识别':
                     )
 
                     # 初始化进度条
-                    progress_bar = st.progress(0)
+                   
+                    total_frames = None
                     frame_count = 0
+                    progress_bar = None
 
-                    # 读取输出，更新进度条
+                    # 读取输出并更新进度条
                     for line in process.stdout:
+                        st.write(line)  # 打印日志以便调试
                         if "video 1/1" in line:
-                            frame_count += 1
-                            progress = frame_count / 197  # 临时假设总帧数
-                            progress_bar.progress(progress)
+                            if total_frames is None:
+                                total_frames = extract_total_frames(line)
+                                if total_frames:
+                                    progress_bar = st.progress(0)
+                            if total_frames:
+                                frame_count += 1
+                                progress = frame_count / total_frames
+                                progress_bar.progress(progress)
 
                     # 确保进程完成
-                    process.communicate()
+                    stdout, stderr = process.communicate()
 
+                    # 将进度条更新到100%
+                    if progress_bar:
+                        progress_bar.progress(1.0)
+                    st.success('视频处理完成！')
                     # 显示结果视频
                     result_video_path = os.path.join("temp_results", "detect_result", unique_filename)
                     st.video(result_video_path)
