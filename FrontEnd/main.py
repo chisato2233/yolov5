@@ -97,7 +97,7 @@ elif option == '👁️品种识别':
                 # 调用YOLOv5的detect.py脚本进行推断
                 print("当前工作目录:", os.getcwd())
                 import sys
-                subprocess.run([
+                result = subprocess.run([
                     sys.executable, "detect.py",
                     "--weights", "best.pt",
                     "--source", image_path,
@@ -107,6 +107,8 @@ elif option == '👁️品种识别':
                     "--line-thickness", "2",
                 ], check=True)
                 
+                if result.returncode != 0:
+                    print("错误输出:", result.stderr.decode())
                 # 读取并显示结果图像
                 result_path = os.path.join("temp_results", "detect_result", unique_filename)
                 result_image = Image.open(result_path)
