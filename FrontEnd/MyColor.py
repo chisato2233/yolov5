@@ -5,11 +5,11 @@ from PIL import Image, ImageDraw, ImageFont
 import torch
 from torchvision import transforms
 from torchvision.models.detection import fasterrcnn_resnet50_fpn
-
+from torchvision.models.detection.faster_rcnn import FasterRCNN_ResNet50_FPN_Weights
 from detect_areas import detect_red_areas
 
 
-model_color = fasterrcnn_resnet50_fpn(pretrained=True)
+model_color = fasterrcnn_resnet50_fpn(weights=FasterRCNN_ResNet50_FPN_Weights.DEFAULT)
 model_color.eval()
 
 def detect_peach(image, threshold=0.1):

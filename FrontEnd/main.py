@@ -9,7 +9,7 @@ import torch
 import numpy as np
 import torch
 from torchvision import transforms
-from MyColor import color_detect
+from .MyColor import color_detect
 import linear.LinearRegression.MultivariateLinearRegression as ml
 import sys;
 def extract_total_frames(log_line):
