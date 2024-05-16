@@ -168,10 +168,11 @@ elif option == '👁️品种识别':
                     progress_bar.progress(1.0)
                     st.success("识别完成！")
 
-            # 清理临时生成的文件的按钮
-            if st.button('清理临时文件'):
-                os.remove(os.path.join("temp_images" if file_type in ["jpg", "jpeg", "png"] else "temp_videos", unique_filename
-
+                    # 清理临时生成的文件的按钮
+                if st.button('清理临时文件'):
+                    os.remove(os.path.join("temp_images" if file_type in ["jpg", "jpeg", "png"] else "temp_videos", unique_filename))
+                    os.remove(os.path.join("temp_results", "detect_result", unique_filename))
+                    st.success("临时文件已清理！")
 
 elif option == '🍬甜度分析':
     st.markdown("## 🍬甜度分析")
