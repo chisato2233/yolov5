@@ -65,6 +65,6 @@ def color_detect(uploaded_file):
 
         total_red_area_ratio = (total_red_pixels / total_pixels) * 100
         text = f"是否成熟：成熟\n总红色区域占比: {total_red_area_ratio:.2f}%"
-        draw.text((x1, y1 - 60 - text_offset_y), text, font=font, fill=(0, 0, 255))
+        draw.text((x1, y1 - 60 - text_offset_y), text, fill=(0, 0, 255))
 
     return image_pil
