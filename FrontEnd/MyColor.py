@@ -1,5 +1,5 @@
 import streamlit as st
-from PIL import Image, ImageDraw, ImageFont
+import cv2
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 import torch
@@ -33,24 +33,22 @@ def draw_text_with_background(draw, text, position, font, text_color, bg_color):
     # 绘制文本
     draw.text((x, y), text, fill=text_color, font=font)
 
+
 def color_detect(uploaded_file):
     image_pil = Image.open(uploaded_file).convert("RGB")
+    image_cv2 = cv2.cvtColor(np.array(image_pil), cv2.COLOR_RGB2BGR)
     
     # 转换图像以适应模型输入
     peach_boxes = detect_peach(image_pil)
     for box in peach_boxes:
-        x1, y1, x2, y2 = map(int, box)
-        peach_roi = image_pil.crop((x1, y1, x2, y2))
-        # 这里需要你有一个返回mask的detect_red_areas函数的替代方案
-        # 假设你可以修改这个函数以使用Pillow处理
+        x1, y1, x2, y2 = box.astype(int)
+        peach_roi = image_cv2[y1:y2, x1:x2]
         red_area_masks = detect_red_areas(peach_roi)
 
-        total_pixels = (x2 - x1) * (y2 - y1)
+        total_pixels = peach_roi.shape[0] * peach_roi.shape[1]
         total_red_pixels = 0
+
         text_offset_y = 0
-
-        draw = ImageDraw.Draw(image_pil)
-
         for name, mask_info in red_area_masks.items():
             mask = mask_info["mask"]
             color = mask_info["color"]
@@ -58,13 +56,25 @@ def color_detect(uploaded_file):
             total_red_pixels += red_pixels
             red_area_ratio = (red_pixels / total_pixels) * 100
 
+            result = cv2.addWeighted(peach_roi, 0.7, cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR), 0.3, 0)
+            result[mask > 0] = color
+            image_cv2[y1:y2, x1:x2] = result
+
             text = f"{name}占比: {red_area_ratio:.2f}%"
-            draw.text((x1, y1 - 40 - text_offset_y), text, fill=color)
+            img_pil = Image.fromarray(cv2.cvtColor(image_cv2, cv2.COLOR_BGR2RGB))
+            draw = ImageDraw.Draw(img_pil)
+            font = ImageFont.truetype('simhei.ttf', 30)
+            draw.text((x1, y1 - 40 - text_offset_y), text, font=font, fill=color)
+            image_cv2 = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
 
             text_offset_y += 40
-
+        
         total_red_area_ratio = (total_red_pixels / total_pixels) * 100
-        text = f"是否成熟：成熟\n总红色区域占比: {total_red_area_ratio:.2f}%"
-        draw.text((x1, y1 - 60 - text_offset_y), text, fill=(0, 0, 255))
 
-    return image_pil
+        text = f"是否成熟：成熟\n总红色区域占比: {total_red_area_ratio:.2f}%"
+        img_pil = Image.fromarray(cv2.cvtColor(image_cv2, cv2.COLOR_BGR2RGB))
+        draw = ImageDraw.Draw(img_pil)
+        draw.text((x1, y1 - 60 - text_offset_y), text, font=font, fill=(0, 0, 255, 0))
+        image_cv2 = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
+
+    return Image.fromarray(cv2.cvtColor(image_cv2, cv2.COLOR_BGR2RGB))
