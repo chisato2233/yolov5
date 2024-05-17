@@ -50,7 +50,6 @@ def color_detect(uploaded_file):
         text_offset_y = 0
 
         draw = ImageDraw.Draw(image_pil)
-        font = ImageFont.truetype('simhei.ttf', 30)
 
         for name, mask_info in red_area_masks.items():
             mask = mask_info["mask"]
@@ -60,7 +59,7 @@ def color_detect(uploaded_file):
             red_area_ratio = (red_pixels / total_pixels) * 100
 
             text = f"{name}占比: {red_area_ratio:.2f}%"
-            draw.text((x1, y1 - 40 - text_offset_y), text, font=font, fill=color)
+            draw.text((x1, y1 - 40 - text_offset_y), text, fill=color)
 
             text_offset_y += 40
 
