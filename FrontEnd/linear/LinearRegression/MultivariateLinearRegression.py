@@ -37,7 +37,7 @@ def R2(y, y_pre):
 def predict_sugar_content(features_array):
     
     
-    data = pd.read_csv('./linear/data/optical density-sugar degree.csv')
+    data = pd.read_csv('./FrontEnd/linear/data/optical density-sugar degree.csv')
 
     #信息导入
     train_data = data.sample(frac=0.8)
