@@ -63,7 +63,7 @@ def color_detect(uploaded_file):
             text = f"{name}占比: {red_area_ratio:.2f}%"
             img_pil = Image.fromarray(cv2.cvtColor(image_cv2, cv2.COLOR_BGR2RGB))
             draw = ImageDraw.Draw(img_pil)
-            font = ImageFont.truetype('simhei.ttf', 30)
+            font = ImageFont.load_default()            
             draw.text((x1, y1 - 40 - text_offset_y), text, font=font, fill=color)
             image_cv2 = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
 
