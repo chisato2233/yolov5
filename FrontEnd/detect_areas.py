@@ -23,12 +23,11 @@ yellow_ranges = [
 ]
 
 def detect_red_areas(image):
-    image = Image.open(image).convert('RGB')
+    image = image.convert('RGB')
     image_np = np.array(image)
     hsv = matplotlib.colors.rgb_to_hsv(image_np/255.0)*255
     masks = {}
 
-    masks = {}
     for red_range in red_ranges:
         lower, upper = red_range["lower"], red_range["upper"]
         mask = ((hsv[:,:,0] >= lower[0]) & (hsv[:,:,0] <= upper[0]) &
@@ -40,12 +39,12 @@ def detect_red_areas(image):
     return masks
 
 def detect_yellow_areas(image):
-    image = Image.open(image).convert('RGB')
+    image = image.convert('RGB')
     image_np = np.array(image)
     hsv = matplotlib.colors.rgb_to_hsv(image_np/255.0)*255
     masks = {}
 
-    masks = {}
+
     for red_range in yellow_ranges:
         lower, upper = red_range["lower"], red_range["upper"]
         mask = ((hsv[:,:,0] >= lower[0]) & (hsv[:,:,0] <= upper[0]) &
