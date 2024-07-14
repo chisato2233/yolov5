@@ -110,7 +110,7 @@ elif option == '👁️品种识别':
 
         if st.button("开始识别！😆"):
             with st.spinner("模型在检测... 🤯🤯🤯"):
-                if file_type in ["jpg", "jpeg", "png"]:
+                if file_type in ["jpg", "png"]:
                     # 图片识别逻辑
                     result = subprocess.run([
                         sys.executable, "detect.py",
