@@ -71,7 +71,7 @@ if option == '🎨着色度分析':
     
     
     
-    uploaded_file = st.file_uploader("请上传要分析的桃子的图片 ： ", type=["jpg", "png"])
+    uploaded_file = st.file_uploader("请上传要分析的桃子的图片 ： ", type=[ "png"])
     if uploaded_file is not None:
         orginal_image = Image.open(uploaded_file)
         st.image(orginal_image, caption='上传的图片', use_column_width=True)
