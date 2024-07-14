@@ -88,13 +88,13 @@ elif option == '👁️品种识别':
             '训练并优化得出的桃子品种识别模型精准快速地识别桃子品种。在下方上传需要分析的桃子图片或视频即可自动识别并生成识别结果。')
 
     # 文件上传
-    uploaded_file = st.file_uploader("请上传要分析的桃子的图片或视频：", type=["jpg", "jpeg", "png", "mp4", "avi", "mov"])
+    uploaded_file = st.file_uploader("请上传要分析的桃子的图片或视频：", type=["jpg",  "png"])
     if uploaded_file is not None:
         file_type = uploaded_file.name.split('.')[-1].lower()  # 获取文件扩展名
 
         # 保存文件到临时目录
         unique_filename = f"{uuid.uuid4()}.{file_type}"
-        if file_type in ["jpg", "jpeg", "png"]:
+        if file_type in ["jpg", "png"]:
             # 处理图片
             image = Image.open(uploaded_file)
             st.image(image, caption="Uploaded Image", use_column_width=True)
